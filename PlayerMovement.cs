@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 // I am also assuming a Cinemachine Virtual Camera is being used for player perspective, as such this script does not directly handle moving the player camera itself.
 // Some comments are spread throughout the script to try to explain what is happening.
 
-// Made by SoapyTarantula | https://twitter.com/SoapyTarantula
+// Made by SoapyTarantula |https://github.com/SoapyTarantula | https://twitter.com/soapytarantula
 
 // REQUIRES NAMESPACES:
 // using UnityEngine;
@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Range(1f, 15f)] [SerializeField] float _mouseSensitivity = 5f; // Limits the mouse sensitivity between 1 and 15, defaulting to 5. I found values above 15 to be unusably fast.
     [SerializeField] float _turnSpeed = 90f; // Only applies if tank controls are true.
-    [SerializeField] bool isTankControls = false; // Do we want to use tank style turning? By default it is set to false.
+    [SerializeField] bool _isTankControls = false; // Do we want to use tank style turning? By default it is set to false.
     [SerializeField] float _runSpeed = 1000f; // Has to be a high value if using `Time.fixedDeltaTime` however you can adjust the value to something else for your own project.
     [SerializeField] float _jumpForce = 300f; // Same as above.
 
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded())
         {
             // Handles movement on the ground assuming tank control mode is false
-            if (!isTankControls)
+            if (!_isTankControls)
             {
                 _rb.AddForce(transform.forward * _move.y * _runSpeed * Time.fixedDeltaTime + transform.right * _move.x * _runSpeed * Time.fixedDeltaTime);
             }
@@ -96,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         // Handles player rotation if tank controls is set to false. Uses the mouse's left & right delta position.
-        if (!isTankControls)
+        if (!_isTankControls)
         {
             transform.Rotate(Vector3.up * _mouseLook.x * _mouseSensitivity);
         }
