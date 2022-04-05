@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     [Range(1f, 100f)] [SerializeField] float _mouseSensitivity = 50f; // Limits the mouse sensitivity between 1 and 100.
     [SerializeField] float _turnSpeed = 90f; // Only applies if tank controls are true.
     [SerializeField] bool _isTankControls = false; // Do we want to use tank style turning? By default it is set to false.
-    [SerializeField] bool _moveInAir = false; // Do we want to allow player input while in the air? Defaults to false.
+    [SerializeField] bool _moveInAir = true; // Do we want to allow player input while in the air? Defaults to true. NOTE: If this is set to false it is entirely possible for the player to get stuck on ledges where they cannot move. Only disable if you've solved this or are certain it won't happen.
     [SerializeField] float _moveSpeed = 1000f; // Has to be a high value if using `Time.fixedDeltaTime` however you can adjust the value to something else for your own project.
     [SerializeField] float _jumpForce = 300f; // Same as above.
     [SerializeField] float _sphereRadius = 0.15f; // The radius of the SphereCast we use to determine if we're grounded.
@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         // Check if we're on the ground and adjust our movement speed for in air control.
-        if (!IsGrounded())
+        if (!IsGrounded() && _moveInAir)
         {
             _moveSpeed = _originalMoveSpeed * _inAirSpeedMultiplier; // Sets _moveSpeed to _moveSpeed multiplied by our float, set above.
         }
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleRotation();
 
-        if (!IsGrounded() && !_moveInAir) // Check right away to see if we're allowed to move in the air, if not and we're not on the ground, do nothing.
+        if (!IsGrounded() && !_moveInAir) // Check right away to see if we're on the ground and if we've got _moveInAir disabled.
         {
             return;
         }
