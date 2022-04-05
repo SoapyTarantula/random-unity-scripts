@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 
 // This script assumes the new input system is being used, but could be modified for the old input system without too much effort.
 // The script is assuming a 3D Rigidbody is used for the player object, and it also assumes you have constrained the XYZ *rotations* of the Rigidbody.
+// I am using a Sphere cast to determine if the player is on the ground and therefor can jump. A Spherecast is just a fat Raycast.
 // I am also assuming a Cinemachine Virtual Camera is being used for player perspective, as such this script does not directly handle moving the player camera itself.
 // Some comments are spread throughout the script to try to explain what is happening.
 
-// Made by SoapyTarantula |https://github.com/SoapyTarantula | https://twitter.com/soapytarantula
+// Poorly made by SoapyTarantula | https://github.com/SoapyTarantula | https://twitter.com/soapytarantula
 
 // REQUIRES NAMESPACES:
 // using UnityEngine;
@@ -24,14 +25,17 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _move; // WASD movement.
     private Vector2 _mouseLook; // Mouse delta, aka change of position since last frame.
     private Rigidbody _rb; // The Rigidbody we're using.
-    private float _distToGround; // Used for our ground-check Raycast.
+    private float _distToGround; // Used for our ground-check Spherecast.
     private bool _jumpPressed; // Used to determine if we're trying to jump.
 
-    [Range(1f, 15f)] [SerializeField] float _mouseSensitivity = 5f; // Limits the mouse sensitivity between 1 and 15, defaulting to 5. I found values above 15 to be unusably fast.
+    [Range(1f, 100f)] [SerializeField] float _mouseSensitivity = 50f; // Limits the mouse sensitivity between 1 and 100.
     [SerializeField] float _turnSpeed = 90f; // Only applies if tank controls are true.
     [SerializeField] bool _isTankControls = false; // Do we want to use tank style turning? By default it is set to false.
     [SerializeField] float _runSpeed = 1000f; // Has to be a high value if using `Time.fixedDeltaTime` however you can adjust the value to something else for your own project.
     [SerializeField] float _jumpForce = 300f; // Same as above.
+
+    [SerializeField] GameObject _viewEmpty;
+    [SerializeField] float sphereRadius = 0.15f; // The radius of the SphereCast we use to determine if we're grounded.
 
     // In Awake() we are initializing a new instance of the Controls() script and applying it to a local variable, because we have to do it that way for some reason.
     private void Awake()
@@ -58,9 +62,8 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
 
         _rb = GetComponent<Rigidbody>(); // The 3D Rigidbody of the object this script it attached to.
-        _distToGround = GetComponent<BoxCollider>().bounds.extents.y; // Used to see if we're on the ground.
+        _distToGround = GetComponent<CapsuleCollider>().bounds.extents.y; // Used to see if we're on the ground.
     }
-
     // Update() is where we check player input & do things that can operate every frame without causing issues.
     private void Update()
     {
@@ -88,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 _rb.AddForce(transform.forward * _move.y * _runSpeed * Time.fixedDeltaTime);
             }
-            // Jumping stuff, we use a ray cast in the IsGrounded() function to determine if we're on the ground or not.
+            // Jumping stuff, we use a Spherecast in the IsGrounded() function to determine if we're on the ground or not.
             if (_jumpPressed)
             {
                 _rb.AddForce(Vector3.up * _jumpForce * Time.fixedDeltaTime, ForceMode.Impulse); // This will apply an upward force to the rigidbody, using world space. Switch `Vector3.up` to `transform.up` if you want to use local space.
@@ -98,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         // Handles player rotation if tank controls is set to false. Uses the mouse's left & right delta position.
         if (!_isTankControls)
         {
-            transform.Rotate(Vector3.up * _mouseLook.x * _mouseSensitivity);
+            transform.Rotate(Vector3.up * _mouseLook.x * _mouseSensitivity * 2 * Time.fixedDeltaTime);
         }
         //Handles player rotation if tank controls is true. Uses the left & right keyboard controls.
         else
@@ -107,11 +110,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Checks to see if we're on the ground by shooting a raycast out from the player transform. _rayDist is the distance the raycasy travels *from the "skin" of the transform*. Returns true if it hits anything in that distance.
+    // Checks to see if we're on the ground by shooting a Spherecast out from the player transform. _rayDist is the distance the Spherecast travels *from the "skin" of the transform*. Returns true if it hits anything in that distance.
     private bool IsGrounded()
     {
         float _rayDist = 0.1f;
-        return Physics.Raycast(transform.position, -Vector3.up, _distToGround + _rayDist);
+        Ray _ray = new Ray(transform.position, -Vector3.up);
+        return Physics.SphereCast(_ray, sphereRadius, _distToGround + _rayDist);
     }
 }
 
