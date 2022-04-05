@@ -33,8 +33,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] bool _isTankControls = false; // Do we want to use tank style turning? By default it is set to false.
     [SerializeField] float _runSpeed = 1000f; // Has to be a high value if using `Time.fixedDeltaTime` however you can adjust the value to something else for your own project.
     [SerializeField] float _jumpForce = 300f; // Same as above.
-
-    [SerializeField] GameObject _viewEmpty;
     [SerializeField] float sphereRadius = 0.15f; // The radius of the SphereCast we use to determine if we're grounded.
 
     // In Awake() we are initializing a new instance of the Controls() script and applying it to a local variable, because we have to do it that way for some reason.
