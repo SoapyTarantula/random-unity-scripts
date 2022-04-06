@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class mouseLook : MonoBehaviour
+public class MouseLook : MonoBehaviour
 {
     public float mSens = 100f;
     public Transform pBody;
 
-    float xRot;
+    float _xRot;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -20,8 +20,8 @@ public class mouseLook : MonoBehaviour
         //print(mouseX + ", " + mouseY); // Just seeing if this is reading correctly.
 
         pBody.Rotate(Vector3.up * mouseX);
-        xRot -= mouseY;
-        xRot = Mathf.Clamp(xRot, -70f, 90f);
-        transform.localRotation = Quaternion.Euler(xRot,0f,0f);
+        _xRot -= mouseY;
+        _xRot = Mathf.Clamp(_xRot, -70f, 90f);
+        transform.localRotation = Quaternion.Euler(_xRot,0f,0f);
     }
 }
