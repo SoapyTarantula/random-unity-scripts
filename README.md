@@ -1,1 +1,1 @@
-Just sticking random scripts here that I create while doing game dev stuff badly.
+Random scripts I've created while doing Unity stuff poorly.
