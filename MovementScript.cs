@@ -78,6 +78,7 @@ public class MovementScript : MonoBehaviour
         Inputs();
         IsGrounded();
         CameraLook();
+        Jumping();
     }
 
     private void FixedUpdate()
@@ -87,7 +88,6 @@ public class MovementScript : MonoBehaviour
         {
             Crouching();
         }
-        Jumping();
         BetterJumpingAndFalling();
     }
 
@@ -121,7 +121,7 @@ public class MovementScript : MonoBehaviour
             }
         }
     }
-    // Handles jumping. Probably should move the input check to a separate thing outside of FixedUpdate.
+    // Handles jumping.
     void Jumping()
     {
         if (IsGrounded())
